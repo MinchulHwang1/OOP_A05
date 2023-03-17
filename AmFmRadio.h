@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <iostream>
 using namespace std;
 #ifndef _CARRADIO_H
 #define _CARRADIO_H
@@ -76,28 +77,29 @@ public:
 
 	/* -------------- ATTRIBUTES ------------ */
 	/* ---------- METHOD PROTOTYPES --------- */
+	AmFmRadio();
 	AmFmRadio(bool on);
 	AmFmRadio(bool on, Freqs button[kNumberOfArray]);
 	~AmFmRadio();
 
-	void PowerToggle();							// Returns a true if the radio is currently powered on, and false if the radio is in the off position
-	bool IsRadioOn();							// Status of radio power
-	int SetVolume();							// Sets volume
+	void PowerToggle(void);							// Returns a true if the radio is currently powered on, and false if the radio is in the off position
+	bool IsRadioOn(void);							// Status of radio power
+	int SetVolume(void);							// Sets volume
 	int SetVolume(int volume);					// Sets volume with parameter
-	void ToggleBand();							// Toggles frequency between AM and FM and sets current station
+	void ToggleBand(void);							// Toggles frequency between AM and FM and sets current station
 	int SetPresetButton(int button_num);		// Sets button (radio preset) with current station by being passed a button number
 	int SelectPresetButton(int button_num);		// Sets current station to radio preset by being passed a button number
-	void ScanUp();								// Changes frequency up in increments of .2 for FM, 10 for AM
-	void ScanDown();							// Changes frequency down in increments of .2 for FM, 10 for AM
-	void ShowCurrentSettings();					// Shows volume, button settings, current station, AM or FM
+	void ScanUp(void);								// Changes frequency up in increments of .2 for FM, 10 for AM
+	void ScanDown(void);							// Changes frequency down in increments of .2 for FM, 10 for AM
+	void ShowCurrentSettings(void);					// Shows volume, button settings, current station, AM or FM
 
-	float GetCurrent_Station();		// Accessor - current_station
-	int GetVolume();				// Accessor - volume
-	bool GetOn();					// Accessor - on
-	char* GetBandName();			// Accessor - band
-	bool GetDisplayOutput();		// Accessor - displayOutput
-	Freqs GetButton();				// Accessor - struct of buttons
-	Freqs GetRememberStatus();		// Accessor - struct of previous information.
+	float GetCurrent_Station(void);		// Accessor - current_station
+	int GetVolume(void);				// Accessor - volume
+	bool GetOn(void);					// Accessor - on
+	char* GetBandName(void);			// Accessor - band
+	bool GetDisplayOutput(void);		// Accessor - displayOutput
+	Freqs GetButton(int button_num);				// Accessor - struct of buttons
+	Freqs GetRememberStatus(void);		// Accessor - struct of previous information.
 
 	void SetCurrentStation(float current_station);  // Mutator of current_station
 	void SetDisplayOutput(bool displayOutput);		// Mutator of displayOutput

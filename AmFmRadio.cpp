@@ -10,9 +10,37 @@
 	Outputs	: NONE
 	Returns	: Nothing
 */
+
+AmFmRadio::AmFmRadio() {
+	on = true;
+
+	// Initialization of array value.
+	for (int i = kZeroValue; i < kNumberOfArray; ++i) {
+		button[i].AMFreqs = kMinAMFreqs;
+	}
+	for (int j = kZeroValue; j < kNumberOfArray; ++j) {
+		button[j].FMFreqs = kMinFMFreqs;
+	}
+
+	// Initialization of Current_station
+	current_station = kMinAMFreqs;
+
+	// Initialization of array of band.
+	strncpy(band, "AM", sizeof("AM"));
+	strncpy(bandCopy, "", sizeof(""));
+
+	// Initialization of struct rememberStatus.
+	rememberStatus.rememberVolume = volume = kMinVolume;
+	strncpy(rememberStatus.rememberBand, band, sizeof(band));
+	rememberStatus.AMFreqs = kMinAMFreqs;
+	rememberStatus.FMFreqs = kMinFMFreqs;
+
+	button_num = kZeroValue;
+	displayOutput = false;
+}
 AmFmRadio::AmFmRadio(bool on) {
 	// Initialization of Bool value.
-	on = false;
+	
 	this->on = on;
 
 	// Initialization of array value.
@@ -51,7 +79,6 @@ AmFmRadio::AmFmRadio(bool on) {
 */
 AmFmRadio::AmFmRadio(bool on, Freqs button[kNumberOfArray]) {
 	// Initialization of Bool value.
-	on = false;
 	this->on = on;
 
 	// Initialization of array value.
@@ -89,7 +116,7 @@ AmFmRadio::AmFmRadio(bool on, Freqs button[kNumberOfArray]) {
 	Returns	: Nothing
 */
 AmFmRadio::~AmFmRadio() {
-	printf("Destorying AmFmRadio\n");
+	// printf("Destorying AmFmRadio\n");
 }
 
 /*  -- Method Header Comment
@@ -100,8 +127,9 @@ AmFmRadio::~AmFmRadio() {
 	Returns	: true		when it turns on
 			  false		when it turns off
 */
-void AmFmRadio::PowerToggle() {
+void AmFmRadio::PowerToggle(void) {
 	if (on == false) {
+		
 		if (strcmp(band, "AM") == 0) {
 			current_station = (float)rememberStatus.AMFreqs;		// To save current frequency into rememberStatus member
 			volume = rememberStatus.rememberVolume;					// To save current volume into rememberStatus member
@@ -111,6 +139,7 @@ void AmFmRadio::PowerToggle() {
 			volume = rememberStatus.rememberVolume;					// To save current volume into rememberStatus member
 		}
 		on = true;
+
 	}
 	else {
 		if (strcmp(band, "AM") == 0) {
@@ -131,7 +160,7 @@ void AmFmRadio::PowerToggle() {
 	Outputs	: NONE
 	Returns	: on
 */
-bool AmFmRadio::IsRadioOn() {
+bool AmFmRadio::IsRadioOn(void) {
 	return on;
 }
 
@@ -144,27 +173,29 @@ bool AmFmRadio::IsRadioOn() {
 			  kOverMaxVolRet = 2	when the insert volume is biggner or the same as 100.
 			  kVolRet = 1			when the insert volume is between 0 ~ 100
 */
-int AmFmRadio::SetVolume() {
-	char buf[kBuffer] = "";
+int AmFmRadio::SetVolume(void) {
+	if (on == true) {
+		char buf[kBuffer] = "";
 
-	printf("\nEnter the volume level (0 - 100). ");
-	fgets(buf, sizeof buf, stdin);
-	volume = atoi(buf);
+		printf("\nEnter the volume level (0 - 100). ");
+		fgets(buf, sizeof buf, stdin);
+		volume = atoi(buf);
 
-	//if user enters volume less than 0, volume = 0
-	if (volume < kMinVolume) {
-		volume = kMinVolume;
-		rememberStatus.rememberVolume = volume;					// Save current volume into rememberStatus
-		return kOverLowVolRet;
+		//if user enters volume less than 0, volume = 0
+		if (volume < kMinVolume) {
+			volume = kMinVolume;
+			rememberStatus.rememberVolume = volume;					// Save current volume into rememberStatus
+			return kOverLowVolRet;
+		}
+		//if user enters volume greater than 100, volume = 100
+		if (volume > kMaxVolume) {
+			volume = kMaxVolume;
+			rememberStatus.rememberVolume = volume;					// Save current volume into rememberStatus
+			return kOverMaxVolRet;
+		}
+		rememberStatus.rememberVolume = volume;						// Save current volume into rememberStatus
+		return kVolRet;
 	}
-	//if user enters volume greater than 100, volume = 100
-	if (volume > kMaxVolume) {
-		volume = kMaxVolume;
-		rememberStatus.rememberVolume = volume;					// Save current volume into rememberStatus
-		return kOverMaxVolRet;
-	}
-	rememberStatus.rememberVolume = volume;						// Save current volume into rememberStatus
-	return kVolRet;
 }
 
 /*  -- Method Header Comment
@@ -178,12 +209,6 @@ int AmFmRadio::SetVolume() {
 */
 int AmFmRadio::SetVolume(int volume) {
 	this->volume = volume;
-
-	char buf[kBuffer] = "";
-
-	printf("\nEnter the volume level (0 - 100). ");
-	fgets(buf, sizeof buf, stdin);
-	this->volume = atoi(buf);
 
 	//if user enters volume less than 0, volume = 0
 	if (this->volume < kMinVolume) {
@@ -199,6 +224,7 @@ int AmFmRadio::SetVolume(int volume) {
 	}
 	rememberStatus.rememberVolume = this->volume;					// Save current volume into rememberStatus
 	return kVolRet;
+	
 }
 
 /*  -- Method Header Comment
@@ -208,14 +234,17 @@ int AmFmRadio::SetVolume(int volume) {
 	Outputs	: NONE
 	Returns	: Nothing
 */
-void AmFmRadio::ToggleBand() {
+void AmFmRadio::ToggleBand(void) {
 	if (strcmp(band, "AM") == 0) {
 		strncpy(band, "FM", sizeof("FM"));
+		rememberStatus.AMFreqs = current_station;
 		strncpy(&rememberStatus.rememberBand[kBandName], band, sizeof(band));		// Save the string into rememberStatus struct
 		current_station = rememberStatus.FMFreqs;									// Put rememberStatus data member into current_station.
+		
 	}
 	else {
 		strncpy(band, "AM", sizeof("AM"));
+		rememberStatus.FMFreqs = current_station;
 		strncpy(&rememberStatus.rememberBand[kBandName], band, sizeof(band));		// Save the string into rememberStatus struct
 		current_station = (float)rememberStatus.AMFreqs;							// Put rememberStatus data member into current_station.
 	}
@@ -270,7 +299,7 @@ int AmFmRadio::SelectPresetButton(int button_num) {
 	Outputs	: if displayOutput is true, display current band and frequency
 	Returns	: Nothing
 */
-void AmFmRadio::ScanUp() {
+void AmFmRadio::ScanUp(void) {
 	if (strcmp("AM", band) == 0) {
 		//if current_station is 1700, the current_station becomes 530
 		if (current_station == kMaxAMFreqs) {
@@ -293,7 +322,7 @@ void AmFmRadio::ScanUp() {
 		rememberStatus.FMFreqs = current_station;
 	}
 	if (displayOutput == true) {
-		printf("\nCurrent station: %f %s\n", current_station, band);
+		// printf("\nCurrent station: %f %s\n", current_station, band);
 	}
 }
 
@@ -304,7 +333,7 @@ void AmFmRadio::ScanUp() {
 	Outputs	: if displayOutput is true, display current band and frequency
 	Returns	: Nothing
 */
-void AmFmRadio::ScanDown() {
+void AmFmRadio::ScanDown(void) {
 	if (strcmp("AM", band) == 0) {
 		//if current_station is 530, the current_station becomes 170
 		if (current_station == kMinAMFreqs) {
@@ -327,7 +356,7 @@ void AmFmRadio::ScanDown() {
 		rememberStatus.FMFreqs = current_station;
 	}
 	if (displayOutput == true) {
-		printf("\nCurrent station: %f %s\n", current_station, band);
+		// printf("\nCurrent station: %f %s\n", current_station, band);
 	}
 }
 
@@ -338,7 +367,7 @@ void AmFmRadio::ScanDown() {
 	Outputs	: Prints all of information(band, volume, frequency, and preset (both of AM and FM)
 	Returns	: Nothing
 */
-void AmFmRadio::ShowCurrentSettings() {
+void AmFmRadio::ShowCurrentSettings(void) {
 	if (on == true) {
 		printf("\n\nRadio is on. \n");
 	}
@@ -366,7 +395,7 @@ void AmFmRadio::ShowCurrentSettings() {
 	Outputs	: NONE
 	Returns	: current_station		float		includes current frequency
 */
-float AmFmRadio::GetCurrent_Station() {
+float AmFmRadio::GetCurrent_Station(void) {
 	return current_station;
 }
 
@@ -377,7 +406,7 @@ float AmFmRadio::GetCurrent_Station() {
 	Outputs	: NONE
 	Returns	: volume		int			includes current volume
 */
-int AmFmRadio::GetVolume() {
+int AmFmRadio::GetVolume(void) {
 	return volume;
 }
 
@@ -388,7 +417,7 @@ int AmFmRadio::GetVolume() {
 	Outputs	: NONE
 	Returns	: on		bool		includes current on bool vaule
 */
-bool AmFmRadio::GetOn() {
+bool AmFmRadio::GetOn(void) {
 	return on;
 }
 
@@ -399,7 +428,7 @@ bool AmFmRadio::GetOn() {
 	Outputs	: NONE
 	Returns	: bandCopy		char*		string of band
 */
-char* AmFmRadio::GetBandName() {
+char* AmFmRadio::GetBandName(void) {
 	memcpy(bandCopy, band, sizeof(band));
 	return bandCopy;
 }
@@ -411,7 +440,7 @@ char* AmFmRadio::GetBandName() {
 	Outputs	: NONE
 	Returns	: displayOutput			bool		display bool value
 */
-bool AmFmRadio::GetDisplayOutput() {
+bool AmFmRadio::GetDisplayOutput(void) {
 	return displayOutput;
 }
 
@@ -422,7 +451,7 @@ bool AmFmRadio::GetDisplayOutput() {
 	Outputs	: NONE
 	Returns	: button[button_num]		Freqs(struct)		an array which has struct
 */
-Freqs AmFmRadio::GetButton() {
+Freqs AmFmRadio::GetButton(int button_num) {
 	return button[button_num];
 }
 
@@ -433,7 +462,7 @@ Freqs AmFmRadio::GetButton() {
 	Outputs	: NONE
 	Returns	: rememberStatus		Freqs(struct)		current information
 */
-Freqs AmFmRadio::GetRememberStatus() {
+Freqs AmFmRadio::GetRememberStatus(void) {
 	return rememberStatus;
 }
 
