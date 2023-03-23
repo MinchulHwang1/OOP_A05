@@ -10,34 +10,6 @@
 	Outputs	: NONE
 	Returns	: Nothing
 */
-
-AmFmRadio::AmFmRadio() {
-	on = true;
-
-	// Initialization of array value.
-	for (int i = kZeroValue; i < kNumberOfArray; ++i) {
-		button[i].AMFreqs = kMinAMFreqs;
-	}
-	for (int j = kZeroValue; j < kNumberOfArray; ++j) {
-		button[j].FMFreqs = kMinFMFreqs;
-	}
-
-	// Initialization of Current_station
-	current_station = kMinAMFreqs;
-
-	// Initialization of array of band.
-	strncpy(band, "AM", sizeof("AM"));
-	strncpy(bandCopy, "", sizeof(""));
-
-	// Initialization of struct rememberStatus.
-	rememberStatus.rememberVolume = volume = kMinVolume;
-	strncpy(rememberStatus.rememberBand, band, sizeof(band));
-	rememberStatus.AMFreqs = kMinAMFreqs;
-	rememberStatus.FMFreqs = kMinFMFreqs;
-
-	button_num = kZeroValue;
-	displayOutput = false;
-}
 AmFmRadio::AmFmRadio(bool on) {
 	// Initialization of Bool value.
 	
@@ -112,16 +84,16 @@ AmFmRadio::AmFmRadio(bool on, Freqs button[kNumberOfArray]) {
 	Name	: AmFmRadio -- DESTRUCTOR
 	Purpose : To destroy the AmFmRadio object - free up the memory associated with the object
 	Inputs	: NONE
-	Outputs	: Outputs a final message from the object before being destroyed
+	Outputs	: Outputs a final message from the object before being destroyed --> should be deleted
 	Returns	: Nothing
 */
 AmFmRadio::~AmFmRadio() {
-	// printf("Destorying AmFmRadio\n");
+	//printf("Destorying AmFmRadio\n");
 }
 
 /*  -- Method Header Comment
 	Name	: PowerToggle
-	Purpose : When user select '1', Radio power is changed
+	Purpose : to turn Radio power on or off
 	Inputs	: NONE
 	Outputs	: NONE
 	Returns	: true		when it turns on
@@ -139,7 +111,6 @@ void AmFmRadio::PowerToggle(void) {
 			volume = rememberStatus.rememberVolume;					// To save current volume into rememberStatus member
 		}
 		on = true;
-
 	}
 	else {
 		if (strcmp(band, "AM") == 0) {
@@ -153,6 +124,7 @@ void AmFmRadio::PowerToggle(void) {
 	}
 }
 
+
 /*  -- Method Header Comment
 	Name	: IsRadioOn
 	Purpose : To check radio is on or off
@@ -163,6 +135,7 @@ void AmFmRadio::PowerToggle(void) {
 bool AmFmRadio::IsRadioOn(void) {
 	return on;
 }
+
 
 /*  -- Method Header Comment
 	Name	: SetVolume
@@ -227,9 +200,10 @@ int AmFmRadio::SetVolume(int volume) {
 	
 }
 
+
 /*  -- Method Header Comment
 	Name	: PowerToggle
-	Purpose : When user select '3', Band would be changed(AM -> FM or FM -> AM)
+	Purpose : to change Band would be changed(AM -> FM or FM -> AM)
 	Inputs	: NONE
 	Outputs	: NONE
 	Returns	: Nothing
@@ -250,14 +224,16 @@ void AmFmRadio::ToggleBand(void) {
 	}
 }
 
+
 /*  -- Method Header Comment
 	Name	: SetPresetButton
-	Purpose : When user select '4', the preset is changed as current_station as user wants
+	Purpose : to change the preset changed as current_station as user wants
 	Inputs	: button_num				an index of struct array.
 	Outputs	: NONE
 	Returns	: kRetPresetButton = 1		When user wants to change preset in struct array
 			  kRetNullPreButton = 0		When user inserts out of range index.
 */
+
 int AmFmRadio::SetPresetButton(int button_num) {
 	if ((button_num >= kMinRangeOfButton) && (button_num <= kMaxRangeOfButton)) {  // If the insert number is within a range
 		if (strcmp("AM", band) == 0) {
@@ -271,9 +247,10 @@ int AmFmRadio::SetPresetButton(int button_num) {
 	return kRetNullPreButton;
 }
 
+
 /*  -- Method Header Comment
 	Name	: SelectPresetButton
-	Purpose : When user select '5', current frequeency is changed as element which is in button array
+	Purpose : current frequeency is changed as element which is in button array
 	Inputs	: button_num				an index of struct array.
 	Outputs	: NONE
 	Returns	: kRetPresetButton = 1		When user wants to change preset in struct array
@@ -294,7 +271,7 @@ int AmFmRadio::SelectPresetButton(int button_num) {
 
 /*  -- Method Header Comment
 	Name	: ScanUp
-	Purpose : When user select '7', current frequeency is going up with in a range as each amount of frequency (AM : 10, FM : 0.2)
+	Purpose : current frequeency is going up with in a range as each amount of frequency (AM : 10, FM : 0.2)
 	Inputs	: NONE
 	Outputs	: if displayOutput is true, display current band and frequency
 	Returns	: Nothing
@@ -322,13 +299,14 @@ void AmFmRadio::ScanUp(void) {
 		rememberStatus.FMFreqs = current_station;
 	}
 	if (displayOutput == true) {
-		// printf("\nCurrent station: %f %s\n", current_station, band);
+		printf("\nCurrent station: %f %s\n", current_station, band);
 	}
 }
 
+
 /*  -- Method Header Comment
 	Name	: ScanDown
-	Purpose : When user select '8', current frequeency is going down with in a range as each amount of frequency (AM : 10, FM : 0.2)
+	Purpose : current frequeency is going down with in a range as each amount of frequency (AM : 10, FM : 0.2)
 	Inputs	: NONE
 	Outputs	: if displayOutput is true, display current band and frequency
 	Returns	: Nothing
@@ -356,13 +334,14 @@ void AmFmRadio::ScanDown(void) {
 		rememberStatus.FMFreqs = current_station;
 	}
 	if (displayOutput == true) {
-		// printf("\nCurrent station: %f %s\n", current_station, band);
+		printf("\nCurrent station: %f %s\n", current_station, band);
 	}
 }
 
+
 /*  -- Method Header Comment
-	Name	: ScanDown
-	Purpose : When user select '6', it prints all of information(band, volume, frequency, and preset)
+	Name	: ShowCurrentSetting
+	Purpose : it prints all of information(band, volume, frequency, and preset)
 	Inputs	: NONE
 	Outputs	: Prints all of information(band, volume, frequency, and preset (both of AM and FM)
 	Returns	: Nothing
@@ -410,6 +389,7 @@ int AmFmRadio::GetVolume(void) {
 	return volume;
 }
 
+
 /*  -- Method Header Comment
 	Name	: GetOn
 	Purpose : getting on bool vaule and return current on bool vaule
@@ -433,6 +413,7 @@ char* AmFmRadio::GetBandName(void) {
 	return bandCopy;
 }
 
+
 /*  -- Method Header Comment
 	Name	: GetDIsplyOutput
 	Purpose : getting display bool value and display bool value
@@ -455,6 +436,7 @@ Freqs AmFmRadio::GetButton(int button_num) {
 	return button[button_num];
 }
 
+
 /*  -- Method Header Comment
 	Name	: GetRememberStatus
 	Purpose : return struct which has information of current status to save lastest information
@@ -465,6 +447,7 @@ Freqs AmFmRadio::GetButton(int button_num) {
 Freqs AmFmRadio::GetRememberStatus(void) {
 	return rememberStatus;
 }
+
 
 /*  -- Method Header Comment
 	Name	: SetCurrentStation

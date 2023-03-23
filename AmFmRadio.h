@@ -30,7 +30,6 @@ using namespace std;
 #define kOverMaxVolRet		2
 #define kVolRet				1
 
-
 /*
 	-* Struct COMMENT *-
 	NAME    : Freqs
@@ -38,10 +37,10 @@ using namespace std;
 			  Also, previous data can be stored.
 */
 struct Freqs {
-	int		AMFreqs;
-	float	FMFreqs;
-	int		rememberVolume;
-	char	rememberBand[kBandName];
+	int		AMFreqs;						///< it can store AM Frequency
+	float	FMFreqs;						///< It can store FM Frequency
+	int		rememberVolume;					///< It can store Volume
+	char	rememberBand[kBandName];		///< IT can store Band
 };
 
 /*
@@ -58,15 +57,15 @@ class AmFmRadio {
 private:
 	/* -------------- CONSTANTS ------------- */
 	/* -------------- ATTRIBUTES ------------ */
-	Freqs	button[kNumberOfArray];			// Array with structs where user wants to store content for each frequency
-	float	current_station;				// Current frequency station
-	char	band[kBandName];				// Array to store the name "AM", and "FM"
-	int		volume;							// Int value to store volume
-	bool	on;								// Bool value to store power status(on - true, off - false)
-	Freqs	rememberStatus;					// A struct to store previous status of radio.
-	bool	displayOutput;					// Bool value to store display or not
-	int		button_num;						// Int value to save array struct's element
-	char	bandCopy[kBandName];			// Variabless for safe copying of band strings.
+	Freqs	button[kNumberOfArray];			///< Array with structs where user wants to store content for each frequency
+	float	current_station;				///< Current frequency station
+	char	band[kBandName];				///< Array to store the name "AM", and "FM"
+	int		volume;							///< Int value to store volume
+	bool	on;								///< Bool value to store power status(on - true, off - false)
+	Freqs	rememberStatus;					///< A struct to store previous status of radio.
+	bool	displayOutput;					///< Bool value to store display or not
+	int		button_num;						///< Int value to save array struct's element
+	char	bandCopy[kBandName];			///< Variabless for safe copying of band strings.
 
 	/* ====================================== */
 	/*              PUBLIC                    */
@@ -77,32 +76,31 @@ public:
 
 	/* -------------- ATTRIBUTES ------------ */
 	/* ---------- METHOD PROTOTYPES --------- */
-	AmFmRadio();
-	AmFmRadio(bool on);
-	AmFmRadio(bool on, Freqs button[kNumberOfArray]);
-	~AmFmRadio();
+	AmFmRadio(bool on);									///< Constructor with bool parameter.
+	AmFmRadio(bool on, Freqs button[kNumberOfArray]);	///< Constructor with bool parameter and struct .
+	~AmFmRadio();										///< Mutatoe of AmFmRadio object.
 
-	void PowerToggle(void);							// Returns a true if the radio is currently powered on, and false if the radio is in the off position
-	bool IsRadioOn(void);							// Status of radio power
-	int SetVolume(void);							// Sets volume
-	int SetVolume(int volume);					// Sets volume with parameter
-	void ToggleBand(void);							// Toggles frequency between AM and FM and sets current station
-	int SetPresetButton(int button_num);		// Sets button (radio preset) with current station by being passed a button number
-	int SelectPresetButton(int button_num);		// Sets current station to radio preset by being passed a button number
-	void ScanUp(void);								// Changes frequency up in increments of .2 for FM, 10 for AM
-	void ScanDown(void);							// Changes frequency down in increments of .2 for FM, 10 for AM
-	void ShowCurrentSettings(void);					// Shows volume, button settings, current station, AM or FM
+	void PowerToggle(void);							///< Returns a true if the radio is currently powered on, and false if the radio is in the off position
+	bool IsRadioOn(void);							///< Status of radio power
+	int SetVolume(void);							///< Sets volume
+	int SetVolume(int volume);						///< Sets volume with parameter
+	void ToggleBand(void);							///< Toggles frequency between AM and FM and sets current station
+	int SetPresetButton(int button_num);			///< Sets button (radio preset) with current station by being passed a button number
+	int SelectPresetButton(int button_num);			///< Sets current station to radio preset by being passed a button number
+	void ScanUp(void);								///< Changes frequency up in increments of .2 for FM, 10 for AM
+	void ScanDown(void);							///< Changes frequency down in increments of .2 for FM, 10 for AM
+	void ShowCurrentSettings(void);					///< Shows volume, button settings, current station, AM or FM
 
-	float GetCurrent_Station(void);		// Accessor - current_station
-	int GetVolume(void);				// Accessor - volume
-	bool GetOn(void);					// Accessor - on
-	char* GetBandName(void);			// Accessor - band
-	bool GetDisplayOutput(void);		// Accessor - displayOutput
-	Freqs GetButton(int button_num);				// Accessor - struct of buttons
-	Freqs GetRememberStatus(void);		// Accessor - struct of previous information.
+	float GetCurrent_Station(void);					///< Accessor - current_station
+	int GetVolume(void);							///< Accessor - volume
+	bool GetOn(void);								///< Accessor - on
+	char* GetBandName(void);						///< Accessor - band
+	bool GetDisplayOutput(void);					///< Accessor - displayOutput
+	Freqs GetButton(int button_num);				///< Accessor - struct of buttons
+	Freqs GetRememberStatus(void);					///< Accessor - struct of previous information.
 
-	void SetCurrentStation(float current_station);  // Mutator of current_station
-	void SetDisplayOutput(bool displayOutput);		// Mutator of displayOutput
+	void SetCurrentStation(float current_station);  ///< Mutator of current_station
+	void SetDisplayOutput(bool displayOutput);		///< Mutator of displayOutput
 };
 
 #endif

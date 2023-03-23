@@ -1,43 +1,47 @@
+// PioneerCarRadio.cpp
 #include"PioneerCarRadio.h"
 
+
+/*  -- Method Header Comment
+	Name	: PioneerCarRadio -- CONSTRUCTOR
+	Purpose : To instantiate a new PioneerCarRadio object - given a set of attribute values, and inherited from AmFmRadio class
+	Inputs	: on		bool		Bool sttus of power
+	Outputs	: NONE
+	Returns	: Nothing
+*/
 PioneerCarRadio::PioneerCarRadio(bool on) : AmFmRadio(false) {
 	getChar = 'x';
-	on = false;
-	this->on = on;
 	
-	volume = 0;
+	this->on = on;
+	exit = false;
+	volume = kZeroValue;
+	current_station = kMinAMFreqs;
+	strncpy(band, "AM", sizeof("AM"));
+
 }
 
+/*  -- Method Header Comment
+	Name	: PioneerCarRadio -- DESTRUCTOR
+	Purpose : To destroy the PioneerCarRadio object - free up the memory associated with the object
+	Inputs	: NONE
+	Outputs	: Outputs a final message from the object before being destroyed
+	Returns	: Nothing
+*/
 PioneerCarRadio::~PioneerCarRadio() {
 	printf("PioneerCarRadio is destroyed\n");
 }
 
-char PioneerCarRadio::GetChar(void) {
-	getChar = getch();
-	return getChar;
-}
 
-void PioneerCarRadio::SetChar(char getChar) {
-	this->getChar = getChar;
-}
-
-Freqs PioneerCarRadio::GetRememberStatus(void) {
-	rememberStatus = AmFmRadio::GetRememberStatus();
-	return rememberStatus;
-}
-float PioneerCarRadio::GetCurrent_Station(void) {
-	current_station = AmFmRadio::GetCurrent_Station();
-	return current_station;
-}
-char* PioneerCarRadio::GetBandName(void) {
-	band = AmFmRadio::GetBandName();
-	return band;
-}
+/*  -- Method Header Comment
+	Name	: ShowCurrentSetting
+	Purpose : it prints all of information(band, volume, frequency, and preset). it is overriding method in AmFmRadio
+	Inputs	: NONE
+	Outputs	: Prints all of information(band, volume, frequency, and preset (both of AM and FM)
+	Returns	: Nothing
+*/
 void PioneerCarRadio::ShowCurrentSettings(void) {
 	printf("Volume: %d\n", volume);
 
-	
-	// AM, FM 출력방법 바꾸기, 전원끄고 밴드 바꿔도 바뀜 --> 해결해야함
 	if (strcmp(GetBandName(), "AM") == 0) {
 		printf("Current Station: %d %s\n", (int)GetCurrent_Station(), GetBandName());
 	}
@@ -57,6 +61,14 @@ void PioneerCarRadio::ShowCurrentSettings(void) {
 	printf("%d) %6.1f", kNumberOfArray, GetButton(kNumberOfArray - 1).FMFreqs);
 }
 
+
+/*  -- Method Header Comment
+	Name	: CurrentStatus
+	Purpose : it prints current radio's status, and it can get character from user to set key stroke
+	Inputs	: NONE
+	Outputs	: Prints radio's power status/
+	Returns	: Nothing
+*/
 int PioneerCarRadio::CurrentStatus(void) {
 	
 	if (on == false) {
@@ -71,24 +83,32 @@ int PioneerCarRadio::CurrentStatus(void) {
 	}
 
 	GetChar();
-	switch (getChar) {
-	case 'x':
-		return 1;
-		
-	case 'X' :
-		return 1;
-		
-		 // do nothing mean show up nothing or current status?
-	default :
-		DivisionChar(getChar);
-		return 0;
+	ProcessUserKeyStroke(getChar);
+
+	if (exit == true) {
+		return kBreakValue;
 	}
-	
+	else
+		return kZeroValue;
 }
 
-
-void PioneerCarRadio::DivisionChar(char getChar) {
+/*  -- Method Header Comment
+	Name	: ProcessUserKeyStroke
+	Purpose : it divides key stroke gotten from user.
+	Inputs	: getChar		char		the character from user
+	Outputs	: Nothing
+	Returns	: Nothing
+*/
+void PioneerCarRadio::ProcessUserKeyStroke(char getChar) {
 	switch (getChar) {
+	case 'x':
+		exit = true;
+		break;
+
+	case 'X':
+		exit = true;
+		break;
+
 	case 'o':
 		
 		PowerToggle();
@@ -99,8 +119,8 @@ void PioneerCarRadio::DivisionChar(char getChar) {
 	case '+':
 		if (on == true) {
 			volume++;
-			if (volume > 100) {
-				volume = 100;
+			if (volume > kMaxVolume) {
+				volume = kMaxVolume;
 			}
 			SetVolume(volume);
 		}
@@ -111,8 +131,8 @@ void PioneerCarRadio::DivisionChar(char getChar) {
 	case '_':
 		if (on == true) {
 			volume--;
-			if (volume < 0) {
-				volume = 0;
+			if (volume < kMinVolume) {
+				volume = kMinVolume;
 			}
 			SetVolume(volume);
 		}
@@ -140,65 +160,103 @@ void PioneerCarRadio::DivisionChar(char getChar) {
 
 	case '1':
 		if (on == true) {
-			SelectPresetButton(0);
+			SelectPresetButton(kZeroIndex);
 		}
 		break;
 
 	case '2' :
 		if (on == true) {
-			SelectPresetButton(1);
+			SelectPresetButton(kOneIndex);
 		}
 		break;
 
 	case '3' :
 		if (on == true) {
-			SelectPresetButton(2);
+			SelectPresetButton(kTwoIndex);
 		}
 		break;
 
 	case '4' :
 		if (on == true) {
-			SelectPresetButton(3);
+			SelectPresetButton(kThreeIndex);
 		}
 		break;
 
 	case '5' :
 		if (on == true) {
-			SelectPresetButton(4);
+			SelectPresetButton(kFourIndex);
 		}
 		break;
 
 	case '!' :
 		if (on == true) {
-			SetPresetButton(0);
+			SetPresetButton(kZeroIndex);
 		}
 		break;
 
 	case '@' :
 		if (on == true) {
-			SetPresetButton(1);
+			SetPresetButton(kOneIndex);
 		}
 		break;
 
 	case '#' :
 		if (on == true) {
-			SetPresetButton(2);
+			SetPresetButton(kTwoIndex);
 		}
 		break;
 
 	case '$' :
 		if (on == true) {
-			SetPresetButton(3);
+			SetPresetButton(kThreeIndex);
 		}
 		break;
 
 	case '%' :
 		if (on == true) {
-			SetPresetButton(4);
+			SetPresetButton(kFourIndex);
 		}
 		break;
 
 	default:
 		break;
 	}
+}
+
+
+/*  -- Method Header Comment
+	Name	: GetChar
+	Purpose : Get characterfrom user.
+	Inputs	: Nothing
+	Outputs	: Nothing
+	Returns	: getChar		char		a character from user
+*/
+char PioneerCarRadio::GetChar(void) {
+	getChar = getch();
+	return getChar;
+}
+
+/*  -- Method Header Comment
+	Name	: GetCurrent_Station
+	Purpose : Get current station of radio from it's parent's class
+	Inputs	: Nothing
+	Outputs	: Nothing
+	Returns	: current_station		float		current station frequency
+*/
+float PioneerCarRadio::GetCurrent_Station(void) {
+	current_station = AmFmRadio::GetCurrent_Station();
+	return current_station;
+}
+
+
+/*  -- Method Header Comment
+	Name	: GetBandName
+	Purpose : Get band name from parent's class
+	Inputs	: Nothing
+	Outputs	: Nothing
+	Returns	: band		char*		a pointer of band name
+*/
+char* PioneerCarRadio::GetBandName(void) {
+	memcpy(band, AmFmRadio::GetBandName(), sizeof(band));
+	return band;
 }
