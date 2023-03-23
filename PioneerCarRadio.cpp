@@ -81,10 +81,7 @@ int PioneerCarRadio::CurrentStatus(void) {
 		ShowCurrentSettings();
 		printf("\n\n");
 	}
-
-	GetChar();
-	ProcessUserKeyStroke(getChar);
-
+	
 	if (exit == true) {
 		return kBreakValue;
 	}
@@ -259,4 +256,16 @@ float PioneerCarRadio::GetCurrent_Station(void) {
 char* PioneerCarRadio::GetBandName(void) {
 	memcpy(band, AmFmRadio::GetBandName(), sizeof(band));
 	return band;
+}
+
+
+/*  -- Method Header Comment
+	Name	: GetExit
+	Purpose : Get bool value which can finish it.
+	Inputs	: Nothing
+	Outputs	: Nothing
+	Returns	: exit		bool		a bool value which can continue or not
+*/
+bool PioneerCarRadio::GetExit(void) {
+	return exit;
 }

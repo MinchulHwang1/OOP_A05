@@ -52,6 +52,7 @@ public :
 	char GetChar(void);						///< Accessor - to get char from user as keystroke
 	float GetCurrent_Station(void);			///< Accessor - to get current station from AmFmRadio class
 	char * GetBandName(void);				///< Accessor - to get band name from AmFmRadio class
+	bool GetExit(void);						///< Accessor - to get bool value which can figure out break
 };
 
 

@@ -17,9 +17,15 @@ int main() {
 
 	PioneerCarRadio Jazzy(false);
 	int num = kZeroValue;
+	char getChar;
+
 	while (num != kBreakValue) {
 		
 		num = Jazzy.CurrentStatus();
+		getChar = getch();
+		Jazzy.ProcessUserKeyStroke(getChar);
+		if (Jazzy.GetExit() == true)
+			break;
 	}
 
 	return 0;
